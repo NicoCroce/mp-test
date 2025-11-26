@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { MercadoPagoConfig, PreApprovalPlan } from 'mercadopago';
+import { MercadoPagoConfig, PreApprovalPlan, PreApproval } from 'mercadopago';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +28,7 @@ app.use((req, res, next) => {
 });
 
 const preapprovalPlanClient = new PreApprovalPlan(client);
+const preApprovalClient = new PreApproval(client);
 
 async function createSubscriptionPlan() {
     const plan_data = {
@@ -119,7 +120,8 @@ app.post('/webhooks/mercadopago', async (req, res) => {
 
         try {
             // 3. Opcional pero recomendado: Llama a la API de MP para obtener la información completa
-            const preapproval = await client.get(`/preapproval/${preapprovalId}`);
+            // https://github.com/mercadopago/sdk-nodejs/blob/master/src/examples/preApproval/get.ts
+            const preapproval = await preApprovalClient.get({ id: preapprovalId });
 
             console.log(`Datos de sub: ${preapproval}`)
             
