@@ -105,7 +105,7 @@ app.post('/api/generate-link', async (req, res) => {
 
 // Endpoint: POST /webhooks/mercadopago
 app.post('/webhooks/mercadopago', async (req, res) => {
-  console.log('LLEGA!!!!')
+  console.log(JSON.stringify(req.body))
     // 1. Mercado Pago envía la notificación
     const data = req.body;
     
