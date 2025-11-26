@@ -20,6 +20,13 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Middleware de logging
+app.use((req, res, next) => {
+    const timestamp = new Date().toISOString();
+    console.log(`[${timestamp}] ${req.method} ${req.path}`);
+    next();
+});
+
 const preapprovalPlanClient = new PreApprovalPlan(client);
 
 async function createSubscriptionPlan() {
