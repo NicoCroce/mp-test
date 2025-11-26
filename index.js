@@ -105,6 +105,11 @@ app.post('/api/generate-link', async (req, res) => {
 
 // Endpoint: POST /webhooks/mercadopago
 app.post('/webhooks/mercadopago', async (req, res) => {
+
+  console.log('------------------------------------------')
+  console.log('------------------------------------------')
+  console.log('------------------------------------------')
+  
   console.log(JSON.stringify(req.body))
     // 1. Mercado Pago envía la notificación
     const data = req.body;
@@ -114,7 +119,9 @@ app.post('/webhooks/mercadopago', async (req, res) => {
 
         try {
             // 3. Opcional pero recomendado: Llama a la API de MP para obtener la información completa
-            // const preapproval = await client.get(`/preapproval/${preapprovalId}`);
+            const preapproval = await client.get(`/preapproval/${preapprovalId}`);
+
+            console.log(`Datos de sub: ${preapproval}`)
             
             // 4. Lógica de negocio (Actualización de base de datos)
             console.log(`Webhook de Suscripción recibido. ID: ${preapprovalId}`);
