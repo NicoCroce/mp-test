@@ -104,6 +104,21 @@ app.post('/api/generate-link', async (req, res) => {
     return res.status(200).json({ checkout_url: checkout_url });
 });
 
+// Endpoint: GET /api/getapp/:id
+app.get('/api/getapp/:id', async (req, res) => {
+    const preapprovalId = req.params.id;
+
+    try {
+        const preapproval = await preApprovalClient.get({ id: preapprovalId });
+        console.log(`Datos de sub: ${JSON.stringify(preapproval)}`);
+        
+        return res.status(200).json(preapproval);
+    } catch (error) {
+        console.error('Error al obtener preapproval:', error.message);
+        return res.status(500).json({ error: 'Error al obtener la suscripción', message: error.message });
+    }
+});
+
 // Endpoint: POST /webhooks/mercadopago
 app.post('/webhooks/mercadopago', async (req, res) => {
 
@@ -117,6 +132,8 @@ app.post('/webhooks/mercadopago', async (req, res) => {
     
     // 2. Por seguridad, verifica el tipo de notificación  data.type === 'payment'
         const preapprovalId = data.id; // ID de la Suscripción (Preapproval)
+
+        console.log(`Estes es el ID de la solicitud:  ${preapprovalId}`)
 
         try {
             // 3. Opcional pero recomendado: Llama a la API de MP para obtener la información completa
@@ -137,6 +154,8 @@ app.post('/webhooks/mercadopago', async (req, res) => {
     // 5. ¡CRUCIAL! Siempre responde con 200 OK a Mercado Pago, sin importar la lógica interna.
     res.status(200).send();
 });
+
+
 
 
 // Iniciar servidor
