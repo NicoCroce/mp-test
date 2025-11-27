@@ -131,7 +131,7 @@ app.post('/webhooks/mercadopago', async (req, res) => {
     const data = req.body;
     
     // 2. Por seguridad, verifica el tipo de notificación  data.type === 'payment'
-        const preapprovalId = data.id; // ID de la Suscripción (Preapproval)
+        const preapprovalId = data.data.id; // ID de la Suscripción (Preapproval)
 
         console.log(`Estes es el ID de la solicitud:  ${preapprovalId}`)
 
