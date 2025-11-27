@@ -140,7 +140,7 @@ app.post('/webhooks/mercadopago', async (req, res) => {
             // https://github.com/mercadopago/sdk-nodejs/blob/master/src/examples/preApproval/get.ts
             const preapproval = await preApprovalClient.get({ id: preapprovalId });
 
-            console.log(`Datos de sub: ${preapproval}`)
+            console.log(`Datos de sub: ${JSON.stringify(preapproval)}`)
             
             // 4. Lógica de negocio (Actualización de base de datos)
             console.log(`Webhook de Suscripción recibido. ID: ${preapprovalId}`);
