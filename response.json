@@ -1,0 +1,69 @@
+{
+  "id": "61f4440e42e54ee9aaa36b9cccf1b2f4",
+  "payer_id": 1549245608,
+  "payer_email": "",
+  "back_url": "https://app.gloouds.com/login",
+  "collector_id": 65594592,
+  "application_id": 4025359772954609,
+  "status": "authorized",
+  "reason": "Suscripción GLOOUDS mensual",
+  "external_reference": "",
+  "date_created": "2025-11-26T22:57:22.004-04:00",
+  "last_modified": "2025-11-26T22:57:23.891-04:00",
+  "init_point": "https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_id=61f4440e42e54ee9aaa36b9cccf1b2f4",
+  "preapproval_plan_id": "42bc5205b0374db9b638d104aa7ad0bb",
+  "auto_recurring": {
+    "frequency": 1,
+    "frequency_type": "months",
+    "transaction_amount": 100,
+    "currency_id": "ARS",
+    "start_date": "2025-11-26T22:57:22.031-04:00",
+    "billing_day_proportional": false,
+    "has_billing_day": false,
+    "free_trial": {
+      "frequency": 7,
+      "first_invoice_offset": 7,
+      "frequency_type": "days"
+    }
+  },
+  "summarized": {
+    "quotas": null,
+    "charged_quantity": null,
+    "pending_charge_quantity": null,
+    "charged_amount": null,
+    "pending_charge_amount": null,
+    "semaphore": null,
+    "last_charged_date": null,
+    "last_charged_amount": null
+  },
+  "next_payment_date": "2025-12-03T22:57:22.000-04:00",
+  "payment_method_id": "debvisa",
+  "card_id": "9723124928",
+  "payment_method_id_secondary": null,
+  "first_invoice_offset": 7,
+  "subscription_id": "61f4440e42e54ee9aaa36b9cccf1b2f4",
+  "owner": null,
+  "rollout_unification_api_public": false,
+  "api_response": {
+    "status": 200,
+    "headers": {
+      "date": ["Thu, 27 Nov 2025 02:57:24 GMT"],
+      "content-type": ["application/json"],
+      "transfer-encoding": ["chunked"],
+      "connection": ["keep-alive"],
+      "vary": ["Accept-Encoding"],
+      "x-request-id": ["4356f0f2-737a-4d2b-a6da-b769ba4509d4"],
+      "x-content-type-options": ["nosniff"],
+      "x-xss-protection": ["1; mode=block"],
+      "strict-transport-security": [
+        "max-age=16070400; includeSubDomains; preload, max-age=31536000; includeSubDomains"
+      ],
+      "access-control-allow-origin": ["*"],
+      "access-control-allow-headers": ["Content-Type"],
+      "access-control-allow-methods": ["PUT, GET, POST, DELETE, OPTIONS"],
+      "access-control-max-age": ["86400"],
+      "timing-allow-origin": ["*"],
+      "content-encoding": ["gzip"]
+    }
+  }
+}
