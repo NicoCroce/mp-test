@@ -8,8 +8,7 @@ const PORT = process.env.PORT || 3000;
 // Configuración de Mercado Pago
 const client = new MercadoPagoConfig({
   // Reemplaza YOUR_ACCESS_TOKEN por tu token o usa process.env.ACCESS_TOKEN
-  accessToken:
-    "TEST-4025359772954609-112511-4b508203309dc7f645c8d628e01add1d-65594592",
+  accessToken:process.env.ACCESS_TOKEN,
   // Establecer el país (Argentina)
   options: { timeout: 5000, maxRetries: 3, nationalId: "AR" },
 });
