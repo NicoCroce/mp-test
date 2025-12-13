@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { MercadoPagoConfig, PreApprovalPlan, PreApproval } from "mercadopago";
+import { MercadoPagoConfig, PreApprovalPlan, PreApproval,  } from "mercadopago";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,8 +33,49 @@ app.get("/", (req, res) => {
   res.json({ message: "Bienvenido a la API" });
 });
 
+// Endpoint: POST /api/create-subscription
+app.post("/api/create-subscription", async (req, res) => {
+  try {
+    const { preapproval_plan_id, external_reference, payer_email } = req.body;
 
+    // Validar campos requeridos
+    if (!preapproval_plan_id || !external_reference || !payer_email) {
+      return res.status(400).json({ 
+        error: "Faltan campos requeridos",
+        required: ["preapproval_plan_id", "external_reference", "payer_email"]
+      });
+    }
 
+    // Crear la suscripción
+    const subscriptionData = {
+      preapproval_plan_id: preapproval_plan_id,
+      reason: "Suscripción GLOOUDS mensual",
+      external_reference: external_reference,
+      payer_email: payer_email,
+      back_url: "https://app.gloouds.com/login",
+      status: "pending"
+    };
+
+    const subscription = await preApprovalClient.create({ body: subscriptionData });
+
+    console.log(`Suscripción creada exitosamente. ID: ${subscription.id}`);
+
+    return res.status(201).json({
+      success: true,
+      subscription_id: subscription.id,
+      init_point: subscription.init_point,
+      status: subscription.status,
+      data: subscription
+    });
+
+  } catch (error) {
+    console.error("Error al crear la suscripción:", error.message);
+    return res.status(500).json({ 
+      error: "Error al crear la suscripción",
+      message: error.message 
+    });
+  }
+});
 
 // Endpoint: POST /webhooks/mercadopago
 app.post("/webhooks/mercadopago", async (req, res) => {
