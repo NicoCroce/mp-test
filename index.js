@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // Configuración de Mercado Pago
 const client = new MercadoPagoConfig({
   // Reemplaza YOUR_ACCESS_TOKEN por tu token o usa process.env.ACCESS_TOKEN
-  accessToken:process.env.ACCESS_TOKEN,
+  accessToken:process.env.ACCESS_TOKEN || "TEST-4025359772954609-112511-4b508203309dc7f645c8d628e01add1d-65594592",
   // Establecer el país (Argentina)
   options: { timeout: 5000, maxRetries: 3, nationalId: "AR" },
 });
@@ -26,13 +26,74 @@ app.use((req, res, next) => {
 });
 
 const preApprovalClient = new PreApproval(client);
+const preApprovalPlanClient = new PreApprovalPlan(client);
 
 // Rutas
 app.get("/", (req, res) => {
   res.json({ message: "Bienvenido a la API" });
 });
 
-// Endpoint: POST /api/create-subscription
+// Endpoint: POST /api/create-plan
+app.post("/api/create-plan", async (req, res) => {
+  try {
+    const { 
+      reason, 
+      auto_recurring, 
+      payment_methods_allowed, 
+      back_url 
+    } = req.body;
+
+    // Validar campos requeridos
+    if (!reason || !auto_recurring || !back_url) {
+      return res.status(400).json({ 
+        error: "Faltan campos requeridos",
+        required: ["reason", "auto_recurring", "back_url"]
+      });
+    }
+
+    // Validar campos de auto_recurring
+    if (!auto_recurring.frequency || !auto_recurring.frequency_type || 
+        !auto_recurring.transaction_amount || !auto_recurring.currency_id) {
+      return res.status(400).json({ 
+        error: "Faltan campos requeridos en auto_recurring",
+        required: ["frequency", "frequency_type", "transaction_amount", "currency_id"]
+      });
+    }
+
+    // Crear el plan
+    const planData = {
+      reason,
+      auto_recurring,
+      back_url
+    };
+
+    // Agregar payment_methods_allowed si existe
+    if (payment_methods_allowed) {
+      planData.payment_methods_allowed = payment_methods_allowed;
+    }
+
+    const plan = await preApprovalPlanClient.create({ body: planData });
+
+    console.log(`✅ Plan creado exitosamente. ID: ${plan.id}`);
+
+    return res.status(201).json({
+      success: true,
+      plan_id: plan.id,
+      init_point: plan.init_point,
+      status: plan.status,
+      data: plan
+    });
+
+  } catch (error) {
+    console.error("Error al crear el plan:", error.message);
+    return res.status(500).json({ 
+      error: "Error al crear el plan",
+      message: error.message 
+    });
+  }
+});
+
+// Endpoint: POST /api/create-subscription (con plan)
 app.post("/api/create-subscription", async (req, res) => {
   try {
     const { preapproval_plan_id, external_reference, payer_email } = req.body;
@@ -75,6 +136,71 @@ app.post("/api/create-subscription", async (req, res) => {
     });
   }
 });
+
+// Endpoint: POST /api/create-subscription-direct (sin plan previo)
+app.post("/api/create-subscription-direct", async (req, res) => {
+  try {
+    const { 
+      reason, 
+      external_reference, 
+      payer_email, 
+      auto_recurring, 
+      back_url,
+      status 
+    } = req.body;
+
+    // Validar campos requeridos
+    if (!reason || !payer_email || !auto_recurring || !back_url) {
+      return res.status(400).json({ 
+        error: "Faltan campos requeridos",
+        required: ["reason", "payer_email", "auto_recurring", "back_url"]
+      });
+    }
+
+    // Validar campos de auto_recurring
+    if (!auto_recurring.frequency || !auto_recurring.frequency_type || 
+        !auto_recurring.transaction_amount || !auto_recurring.currency_id) {
+      return res.status(400).json({ 
+        error: "Faltan campos requeridos en auto_recurring",
+        required: ["frequency", "frequency_type", "transaction_amount", "currency_id"]
+      });
+    }
+
+    // Crear la suscripción sin plan
+    const subscriptionData = {
+      reason,
+      payer_email,
+      auto_recurring,
+      back_url,
+    };
+
+    // Agregar external_reference si existe
+    if (external_reference) {
+      subscriptionData.external_reference = external_reference;
+    }
+
+    const subscription = await preApprovalClient.create({ body: subscriptionData });
+
+    console.log(`Suscripción directa creada exitosamente. ID: ${subscription.id}`);
+
+    return res.status(201).json({
+      success: true,
+      subscription_id: subscription.id,
+      init_point: subscription.init_point,
+      status: subscription.status,
+      data: subscription
+    });
+
+  } catch (error) {
+    console.error("Error al crear la suscripción directa:", error.message);
+    return res.status(500).json({ 
+      error: "Error al crear la suscripción directa",
+      message: error.message 
+    });
+  }
+});
+
+
 
 // Endpoint: POST /webhooks/mercadopago
 app.post("/webhooks/mercadopago", async (req, res) => {
